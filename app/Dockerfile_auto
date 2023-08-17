@@ -1,0 +1,4 @@
+FROM docker.io/drupal:9.5.10
+
+# CMD ["/usr/sbin/apachectl", "-D", "FOREGROUND"]
+# CMD /usr/sbin/apache2ctl -D FOREGROUND

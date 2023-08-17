@@ -1,0 +1,54 @@
+version: '1.0.6'
+services:
+  app:
+    build:
+      context: ./app/
+      dockerfile: Dockerfile
+    #user: "${UID}:${GID}"
+    container_name: drupal_app
+    ports:
+      - 80:80
+    volumes:
+      - ./app/drupal:/var/www/html
+      #- ./app/drupal/modules:/var/www/html/modules
+      #- ./app/drupal/profiles:/var/www/html/profiles
+      #- ./app/drupal/themes:/var/www/html/themes
+      # this takes advantage of the feature in Docker that a new anonymous
+      # volume (which is what we're creating here) will be initialized with the
+      # existing content of the image at the same location
+      #- ./app/drupal/sites:/var/www/html/sites
+    depends_on:
+      - database
+    networks:
+      app_network:
+        aliases:
+          - app_host
+  database:
+    #user: 501
+    build:
+      context: ./database/
+      dockerfile: Dockerfile
+    #user: "${UID}:${GID}"
+    container_name: drupal_db
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "drupal"
+      MYSQL_USER: "usuario"
+      MYSQL_PASSWORD: "usuario"
+    #volumes:
+      #- ./database/schema:/var/lib/mysql:rw,z
+    networks:
+      app_network:
+        aliases:
+          - mysql_host
+valumes:
+  drupal:{}
+  databse:{}
+networks:
+  app_network:
+    name: app_net
+    driver: bridge
+    ipman:
+      driver: default
